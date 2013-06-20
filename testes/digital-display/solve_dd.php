@@ -1,43 +1,52 @@
 <?
 class NumberProcessor {
-  private $letters = array();
+	private $numbers = array();
 	private $lineSize = 0;
 	private $models = array(
-		1 => '     |  |',
-		2 => ' _  _||_ ',
-		3 => ' _  _| _|',
-		4 => '   |_|  |',
-		5 => ' _ |_  _|',
-		6 => ' _ |_ |_|',
-		7 => ' _   |  |',
-		8 => ' _ |_||_|',
-		9 => ' _ |_| _|',
-		0 => ' _ | ||_|'
+		' _ | ||_|',
+		'     |  |',
+		' _  _||_ ',
+		' _  _| _|',
+		'   |_|  |',
+		' _ |_  _|',
+		' _ |_ |_|',
+		' _   |  |',
+		' _ |_||_|',
+		' _ |_| _|'
 	);
 
 	function __construct($line1,$line2,$line3,$line4) {
-		if ( !empty($line4) ) {
-			throw Exception("Linha 4 deve ser vazia");
-		}
+		/*$line4 = trim($line4);
+		
+		if ( ord($line4) !== 95 && strlen($line4) !== 0 ) {
+			throw new Exception("Linha 4 deve ser vazia");
+		}*/
 
 		$this->lineSize = strlen($line1) - strlen($line1) % 3;
 
 		for( $i = 0; $i < $this->lineSize; $i++ ) {
-			$this->letters[] = substr( $line1, $i*3, 3 ) . substr( $line2, $i*3, 3 ) . substr( $line3, $i*3, 3 );
+			$this->numbers[] = substr( $line1, $i*3, 3 ) . substr( $line2, $i*3, 3 ) . substr( $line3, $i*3, 3 );
 		}
+		
 	}
 
 	function run() {
 		$store = null;
-		foreach ($this->letters as $key => $value) {
-			$store .= array_search($value, $this->models);
+		foreach ($this->numbers as $key => $value) {
+			if ( in_array($value, $this->models) ) {
+				$store .= array_search($value, $this->models);
+			//} else {
+			//	$store = '/!\\erro de formato/!\\';
+			//	break;
+			}
 		}
 
 		return $store;
 	}
 }
 
-$data = file_get_contents("digital_display_data.txt");
+$data = file("digital_display_data.txt");
+echo "==========\nBASE NUMBERS\n==========\n";
 $num = new NumberProcessor(
 	'    _  _     _  _  _  _  _  _ ',
 	'  | _| _||_||_ |_   ||_||_|| |',
@@ -45,3 +54,40 @@ $num = new NumberProcessor(
 	''
 );
 echo $num->run(), "\n";
+echo "==========\nTESTING WRONG\n==========\n";
+$num = new NumberProcessor(
+	'    _  _     _  _  _  _  _  _ ',
+	'  | _| _||_||_ |_   /|_||_|| |',
+	'  ||_  _|  | _||_|  ||_| _||_|',
+	''
+);
+echo $num->run(), "\n";
+echo "==========\nPROCESSING THE FILE\n==========\n";
+
+$num = new NumberProcessor(
+	$data[0],
+	$data[1],
+	$data[2],
+	$data[3]
+);
+
+$line_count = round( count($data) / 4 );
+
+echo "Linhas: ", count($data), "\n";
+echo "Contar: ", $line_count, "\n";
+
+for( $i = 0; $i < $line_count; $i++ ) {
+	$l1 = $data[ $i * 4 ];
+	$l2 = $data[ $i * 4 + 1 ];
+	$l3 = $data[ $i * 4 + 2 ];
+	$l4 = ( isset($data[ $i * 4 + 3 ]) )
+		? $data[ $i * 4 + 3 ]
+		: '';
+	$num = new NumberProcessor(
+		$l1,
+		$l2,
+		$l3,
+		$l4
+	);
+	echo $num->run(), "\n";
+}

@@ -16,11 +16,11 @@ class NumberProcessor {
 	);
 
 	function __construct($line1,$line2,$line3,$line4) {
-		/*$line4 = trim($line4);
+		$line4 = trim($line4);
 		
-		if ( ord($line4) !== 95 && strlen($line4) !== 0 ) {
+		if ( strlen($line4) !== 0 ) {
 			throw new Exception("Linha 4 deve ser vazia");
-		}*/
+		}
 
 		$this->lineSize = strlen($line1) - strlen($line1) % 3;
 
@@ -72,9 +72,6 @@ $num = new NumberProcessor(
 );
 
 $line_count = round( count($data) / 4 );
-
-echo "Linhas: ", count($data), "\n";
-echo "Contar: ", $line_count, "\n";
 
 for( $i = 0; $i < $line_count; $i++ ) {
 	$l1 = $data[ $i * 4 ];

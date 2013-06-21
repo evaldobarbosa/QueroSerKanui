@@ -22,9 +22,9 @@ class NumberProcessor {
 			throw new Exception("Linha 4 deve ser vazia");
 		}
 
-		$this->lineSize = strlen($line1) - strlen($line1) % 3;
+		$this->lineSize = round( strlen($line1) / 3 );
 
-		for( $i = 0; $i < $this->lineSize; $i++ ) {
+		for( $i = 0; $i < $this->lineSize-1; $i++ ) {
 			$this->numbers[] = substr( $line1, $i*3, 3 ) . substr( $line2, $i*3, 3 ) . substr( $line3, $i*3, 3 );
 		}
 		
@@ -33,11 +33,17 @@ class NumberProcessor {
 	function run() {
 		$store = null;
 		foreach ($this->numbers as $key => $value) {
+			if ( empty($value) ) {
+				continue;
+			}
+
 			if ( in_array($value, $this->models) ) {
 				$store .= array_search($value, $this->models);
-			//} else {
-			//	$store = '/!\\erro de formato/!\\';
-			//	break;
+			} else {
+				$i = $key;				
+				//echo '1 ', substr( $value, 0, 3 ) . ".\n" . '2 ' . substr( $value, 3, 3 ) . ".\n" . '3 ' .  substr( $value, 6, 3 ) . ".\n";
+				$store = '/!\\erro de formato/!\\';	
+				break;
 			}
 		}
 
@@ -45,7 +51,6 @@ class NumberProcessor {
 	}
 }
 
-$data = file("digital_display_data.txt");
 echo "==========\nBASE NUMBERS\n==========\n";
 $num = new NumberProcessor(
 	'    _  _     _  _  _  _  _  _ ',
@@ -64,6 +69,7 @@ $num = new NumberProcessor(
 echo $num->run(), "\n";
 echo "==========\nPROCESSING THE FILE\n==========\n";
 
+$data = file("data.txt");
 $num = new NumberProcessor(
 	$data[0],
 	$data[1],
